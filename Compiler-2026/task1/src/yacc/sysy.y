@@ -2,12 +2,22 @@
  * Task 1：请在此实现 SysY2022 语法分析器及 AST 构造语义动作
  */
 
-extern int yylineno;
+%skeleton "lalr1.cc"
 
 %{
-#include "AST.hpp"
+#include "lib/AST.hpp"
+#include <iostream>
+extern int yylineno;
+#include "Frontend.hpp"
 %}
 
+%code requires {
+#include "lib/AST.hpp"
+}
+
+%code provides {
+int yylex(yy::parser::semantic_type* yylval);
+}
 
 %union {
     int number;
@@ -84,7 +94,7 @@ extern int yylineno;
 %type <lAndExp> LAndExp
 %type <lOrExp> LOrExp Cond
 
-%type <type> BType FuncType UnaryOp
+%type <type> BType UnaryOp
 
 %type <funcDef> FuncDef
 %type <funcParam> FuncParam
@@ -106,8 +116,17 @@ extern int yylineno;
 %token RETURN
 %token LE GE EQ NE AND OR
 
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
+
+%start Program
 %%
 
+
+Program:
+    CompUnit {
+        ASTRoot.reset($1);
+};
 
 CompUnit:
         Item{
@@ -207,7 +226,7 @@ Number:
         }
     |   FLOAT_CONST{
             $$ = new ConValue<float>($1);
-    }
+};
 
 UnaryOp:
         '+'     { $$ = SY_ADD; }
@@ -384,17 +403,6 @@ ConstDecl:
             $$ = new ConstDecl($2,$3);
 };
 
-FuncType:
-        INT{
-            $$ = SY_INT;
-    }
-    |   FLOAT{
-            $$ = SY_FLOAT;
-    }
-    |   VOID{
-            $$ = SY_VOID;
-};
-
 FuncParam:
         BType IDENT{
             $$ = new FuncParam($1,$2);
@@ -420,14 +428,22 @@ FuncParamList:
 };
 
 FuncDef:
-        FuncType IDENT '(' FuncParamList ')' Block{
+        BType IDENT '(' FuncParamList ')' Block{
             $$ = new FuncDef($1,$2,$4,$6);
             free($2);
         }
-    |   FuncType IDENT '(' ')' Block{
+    |   BType IDENT '(' ')' Block{
             $$ = new FuncDef($1,$2,nullptr,$5);
             free($2);
-};
+        }
+    |   VOID IDENT '(' FuncParamList ')' Block{
+            $$ = new FuncDef(SY_VOID,$2,$4,$6);
+            free($2);
+        }
+    |   VOID IDENT '(' ')' Block{
+            $$ = new FuncDef(SY_VOID,$2,nullptr,$5);
+            free($2);
+        }
 
 Block:
         '{' '}'{
@@ -499,7 +515,7 @@ AssignStmt:
 };
 
 IfStmt:
-        IF '(' Cond ')' Stmt{
+        IF '(' Cond ')' Stmt %prec LOWER_THAN_ELSE{
             $$ = new IfStmt($3,$5);
         }
     |   IF '(' Cond ')' Stmt ELSE Stmt{
@@ -529,3 +545,11 @@ FuncCall:
             $$ = new FuncCall($1,yylineno);
             free($1);
     };
+
+%%
+
+void yy::parser::error(const std::string& msg) {
+    std::cerr << "Parse error at line "
+              << yylineno << ": "
+              << msg << std::endl;
+};

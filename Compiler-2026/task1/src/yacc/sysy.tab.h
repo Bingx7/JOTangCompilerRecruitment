@@ -56,22 +56,24 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     INT_CONST = 258,               /* INT_CONST  */
     IDENT = 259,                   /* IDENT  */
-    CONST = 260,                   /* CONST  */
-    INT = 261,                     /* INT  */
-    FLOAT = 262,                   /* FLOAT  */
-    VOID = 263,                    /* VOID  */
-    IF = 264,                      /* IF  */
-    ELSE = 265,                    /* ELSE  */
-    WHILE = 266,                   /* WHILE  */
-    BREAK = 267,                   /* BREAK  */
-    CONTINUE = 268,                /* CONTINUE  */
-    RETURN = 269,                  /* RETURN  */
-    LE = 270,                      /* LE  */
-    GE = 271,                      /* GE  */
-    EQ = 272,                      /* EQ  */
-    NE = 273,                      /* NE  */
-    AND = 274,                     /* AND  */
-    OR = 275                       /* OR  */
+    FLOAT_CONST = 260,             /* FLOAT_CONST  */
+    CONST = 261,                   /* CONST  */
+    INT = 262,                     /* INT  */
+    FLOAT = 263,                   /* FLOAT  */
+    VOID = 264,                    /* VOID  */
+    IF = 265,                      /* IF  */
+    ELSE = 266,                    /* ELSE  */
+    WHILE = 267,                   /* WHILE  */
+    BREAK = 268,                   /* BREAK  */
+    CONTINUE = 269,                /* CONTINUE  */
+    RETURN = 270,                  /* RETURN  */
+    LE = 271,                      /* LE  */
+    GE = 272,                      /* GE  */
+    EQ = 273,                      /* EQ  */
+    NE = 274,                      /* NE  */
+    AND = 275,                     /* AND  */
+    OR = 276,                      /* OR  */
+    LOWER_THAN_ELSE = 277          /* LOWER_THAN_ELSE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -80,26 +82,49 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 9 "sysy.y"
+#line 13 "sysy.y"
 
     int number;
     char* str;
+    float float_number;
+
     CompUnit* compUnit;
     BaseAST* ast;
+
     VarDecl* varDecl;
-    Type type;
     VarDef* varDef;
     VarDefList* varDefList;
+
+    ConstDecl* constDecl;
+    ConstDef* constDef;
+    ConstDefList* constDefList;
+
     InitVal* initVal;
     InitValList* initValList;
     ArrayList* arrayList;
-    AddExp* addExp;
+
+    LVal* lval;
     UnaryExp* unaryExp;
     MulExp* mulExp;
-    LVal* lval;
+    AddExp* addExp;
+    RelExp* relExp;
+    EqExp* eqExp;
+    LAndExp* lAndExp;
+    LOrExp* lOrExp;
 
+    FuncDef* funcDef;
+    FuncParam* funcParam;
+    FuncParamList* funcParamList;
 
-#line 103 "sysy.tab.h"
+    Block* block;
+    BlockItemList* blockItemList;
+
+    FuncCall* funcCall;
+    FuncRParamList* funcRParamList;
+
+    Type type;
+
+#line 128 "sysy.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
