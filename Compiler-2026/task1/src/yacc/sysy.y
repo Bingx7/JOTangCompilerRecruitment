@@ -13,6 +13,10 @@ extern int yylineno;
 
 %code requires {
 #include "lib/AST.hpp"
+struct FuncIdent { 
+    char* ident;
+    int line;
+};
 }
 
 %code provides {
@@ -59,6 +63,7 @@ int yylex(yy::parser::semantic_type* yylval);
     FuncRParamList* funcRParamList;
 
     Type type;
+    FuncIdent* funcIdent;
 }
 
 %token <number> INT_CONST
@@ -101,6 +106,8 @@ int yylex(yy::parser::semantic_type* yylval);
 %type <funcParamList> FuncParamList
 %type <funcCall> FuncCall
 %type <funcRParamList> FuncRParamList
+
+%type <funcIdent> FuncIdent;
 
 %type <block> Block
 %type <blockItemList> BlockItemList
@@ -537,14 +544,22 @@ FuncRParamList:
 };
 
 FuncCall:
-        IDENT '(' FuncRParamList ')' {
-            $$ = new FuncCall($1,$3,yylineno);
-            free($1);
+        FuncIdent '(' FuncRParamList ')' {
+            $$ = new FuncCall($1->ident,$3,$1->line);
+            free($1->ident);
+            delete $1;
         }
-    |   IDENT '(' ')'{
-            $$ = new FuncCall($1,yylineno);
-            free($1);
+    |   FuncIdent '(' ')'{
+            $$ = new FuncCall($1->ident,$1->line);
+            free($1->ident);
+            delete $1;
     };
+
+FuncIdent:
+    IDENT {
+        $$ = new FuncIdent{$1, yylineno};
+    }
+;
 
 %%
 

@@ -72,6 +72,14 @@
     yylval->float_number = strtof(yytext, nullptr);
     return FLOAT_CONST;
 }
+0[xX][0-9a-fA-F]+\.[0-9a-fA-F]*[pP][+-]?[0-9]+ {
+    yylval->float_number = strtof(yytext, nullptr);
+    return FLOAT_CONST;
+}
+0[xX]\.[0-9a-fA-F]+[pP][+-]?[0-9]+ {
+    yylval->float_number = strtof(yytext, nullptr);
+    return FLOAT_CONST;
+}
 
 "//"[^\n]*        {}
 

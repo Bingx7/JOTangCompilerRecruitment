@@ -48,8 +48,12 @@
 #line 14 "src/yacc/sysy.y"
 
 #include "lib/AST.hpp"
+struct FuncIdent { 
+    char* ident;
+    int line;
+};
 
-#line 53 "include/yacc/Bison.hpp"
+#line 57 "include/yacc/Bison.hpp"
 
 
 # include <cstdlib> // std::abort
@@ -184,7 +188,7 @@
 #endif
 
 namespace yy {
-#line 188 "include/yacc/Bison.hpp"
+#line 192 "include/yacc/Bison.hpp"
 
 
 
@@ -202,7 +206,7 @@ namespace yy {
     /// Symbol semantic values.
     union value_type
     {
-#line 22 "src/yacc/sysy.y"
+#line 26 "src/yacc/sysy.y"
 
     int number;
     char* str;
@@ -243,8 +247,9 @@ namespace yy {
     FuncRParamList* funcRParamList;
 
     Type type;
+    FuncIdent* funcIdent;
 
-#line 248 "include/yacc/Bison.hpp"
+#line 253 "include/yacc/Bison.hpp"
 
     };
 #endif
@@ -397,7 +402,8 @@ namespace yy {
         S_IfStmt = 81,                           // IfStmt
         S_WhileStmt = 82,                        // WhileStmt
         S_FuncRParamList = 83,                   // FuncRParamList
-        S_FuncCall = 84                          // FuncCall
+        S_FuncCall = 84,                         // FuncCall
+        S_FuncIdent = 85                         // FuncIdent
       };
     };
 
@@ -637,7 +643,7 @@ namespace yy {
     // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
     // positive, shift that token.  If negative, reduce the rule whose
     // number is the opposite.  If YYTABLE_NINF, syntax error.
-    static const unsigned char yytable_[];
+    static const short yytable_[];
 
     static const short yycheck_[];
 
@@ -881,8 +887,8 @@ namespace yy {
     /// Constants.
     enum
     {
-      yylast_ = 233,     ///< Last index in yytable_.
-      yynnts_ = 45,  ///< Number of nonterminal symbols.
+      yylast_ = 246,     ///< Last index in yytable_.
+      yynnts_ = 46,  ///< Number of nonterminal symbols.
       yyfinal_ = 15 ///< Termination state number.
     };
 
@@ -892,15 +898,15 @@ namespace yy {
 
 
 } // yy
-#line 896 "include/yacc/Bison.hpp"
+#line 902 "include/yacc/Bison.hpp"
 
 
 // "%code provides" blocks.
-#line 18 "src/yacc/sysy.y"
+#line 22 "src/yacc/sysy.y"
 
 int yylex(yy::parser::semantic_type* yylval);
 
-#line 904 "include/yacc/Bison.hpp"
+#line 910 "include/yacc/Bison.hpp"
 
 
 #endif // !YY_YY_INCLUDE_YACC_BISON_HPP_INCLUDED
